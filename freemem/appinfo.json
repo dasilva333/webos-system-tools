@@ -1,0 +1,18 @@
+{
+  "id": "com.github.dasilva333.freemem",
+  "version": "1.0.0",
+  "vendor": "dasilva333",
+  "type": "web",
+  "main": "index.html",
+  "title": "Free Memory",
+  "appDescription": "1-click instant RAM optimizer: flushes kernel page caches and frees memory with TV toast",
+  "icon": "icon.png",
+  "largeIcon": "largeIcon.png",
+  "iconColor": "#0d9488",
+  "transparent": true,
+  "noSplashOnLaunch": true,
+  "spinnerOnLaunch": false,
+  "handlesRelaunch": true,
+  "disableBackHistoryAPI": true,
+  "requiredACG": []
+}

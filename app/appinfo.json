@@ -1,0 +1,18 @@
+{
+  "id": "com.github.dasilva333.systemtools",
+  "version": "1.0.0",
+  "vendor": "dasilva333",
+  "type": "web",
+  "main": "index.html",
+  "title": "System Tools",
+  "appDescription": "Interactive process inspector, live RAM monitor, and individual app manager for LG webOS TVs",
+  "icon": "icon.png",
+  "largeIcon": "largeIcon.png",
+  "iconColor": "#2563eb",
+  "transparent": false,
+  "noSplashOnLaunch": true,
+  "spinnerOnLaunch": false,
+  "handlesRelaunch": true,
+  "disableBackHistoryAPI": true,
+  "requiredACG": []
+}

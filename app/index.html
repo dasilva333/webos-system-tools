@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Task Manager</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 1920px;
+    height: 1080px;
+    background: #090d16;
+    color: #f1f5f9;
+    font-family: "LG Smart UI", "Helvetica Neue", Arial, sans-serif;
+    overflow: hidden;
+  }
+  .container {
+    width: 100%;
+    height: 100%;
+    padding: 56px 90px;
+    display: flex;
+    flex-direction: column;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 34px;
+    border-bottom: 1px solid #1e293b;
+    padding-bottom: 28px;
+  }
+  .title-block h1 {
+    margin: 0;
+    font-size: 52px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #f8fafc;
+  }
+  .title-block .sub {
+    margin-top: 8px;
+    font-size: 24px;
+    color: #94a3b8;
+  }
+  .ram-box {
+    width: 620px;
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 18px;
+    padding: 22px 28px;
+  }
+  .ram-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 14px;
+  }
+  .ram-label {
+    font-size: 24px;
+    font-weight: 600;
+    color: #cbd5e1;
+  }
+  .ram-nums {
+    font-size: 24px;
+    font-weight: 600;
+    color: #38bdf8;
+  }
+  .bar-bg {
+    width: 100%;
+    height: 18px;
+    background: #1e293b;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #14b8a6, #3b82f6);
+    border-radius: 10px;
+    transition: width 0.35s ease;
+  }
+  .bar-fill.warn {
+    background: linear-gradient(90deg, #f59e0b, #ef4444);
+  }
+  .actions {
+    display: flex;
+    margin-bottom: 34px;
+    align-items: center;
+  }
+  .actions .btn {
+    margin-right: 24px;
+  }
+  .btn {
+    padding: 20px 38px;
+    border-radius: 14px;
+    font-size: 28px;
+    font-weight: 600;
+    border: 3px solid transparent;
+    background: #1e293b;
+    color: #e2e8f0;
+    cursor: pointer;
+    outline: none;
+    transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+  }
+  .btn.primary {
+    background: #0f766e;
+    color: #ffffff;
+  }
+  .btn.focused, .btn:hover {
+    border-color: #38bdf8;
+    transform: scale(1.04);
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.25);
+  }
+  .btn.primary.focused, .btn.primary:hover {
+    background: #0d9488;
+    border-color: #5eead4;
+  }
+  .status-pill {
+    margin-left: auto;
+    font-size: 24px;
+    color: #94a3b8;
+    background: #111827;
+    padding: 14px 26px;
+    border-radius: 12px;
+    border: 1px solid #1f2937;
+  }
+  .section-title {
+    font-size: 24px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #64748b;
+    margin-bottom: 18px;
+  }
+  .list {
+    flex: 1;
+    overflow-y: auto;
+    display: block;
+    padding-right: 10px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #111827;
+    border: 3px solid #1f2937;
+    border-radius: 18px;
+    padding: 24px 34px;
+    margin-bottom: 16px;
+    min-height: 104px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+  }
+  .row.focused, .row:hover {
+    background: #172033;
+    border-color: #ef4444;
+    transform: translateX(6px);
+    box-shadow: 0 8px 30px rgba(239, 68, 68, 0.18);
+  }
+  .row-left {
+    display: flex;
+    flex-direction: column;
+  }
+  .app-name {
+    font-size: 34px;
+    font-weight: 700;
+    color: #f8fafc;
+  }
+  .app-meta {
+    font-size: 22px;
+    color: #94a3b8;
+    margin-top: 6px;
+  }
+  .row-right {
+    display: flex;
+    align-items: center;
+  }
+  .row-right .mem-badge {
+    margin-right: 28px;
+  }
+  .mem-badge {
+    font-size: 28px;
+    font-weight: 600;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+    padding: 10px 22px;
+    border-radius: 12px;
+    min-width: 145px;
+    text-align: center;
+  }
+  .kill-tag {
+    font-size: 26px;
+    font-weight: 700;
+    color: #fecaca;
+    background: #991b1b;
+    padding: 14px 28px;
+    border-radius: 12px;
+  }
+  .row.focused .kill-tag, .row:hover .kill-tag {
+    background: #dc2626;
+    color: #ffffff;
+  }
+  .empty {
+    background: #111827;
+    border: 1px dashed #334155;
+    border-radius: 18px;
+    padding: 64px;
+    text-align: center;
+    font-size: 30px;
+    color: #94a3b8;
+  }
+  .footer {
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px solid #1e293b;
+    font-size: 22px;
+    color: #64748b;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="title-block">
+      <h1>Task Manager</h1>
+      <div class="sub">Select any running app and press OK to force-close it</div>
+    </div>
+    <div class="ram-box">
+      <div class="ram-top">
+        <span class="ram-label">System RAM</span>
+        <span class="ram-nums" id="ramText">Loading...</span>
+      </div>
+      <div class="bar-bg"><div class="bar-fill" id="ramBar"></div></div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn primary" id="btnCleanAll">Close All &amp; Free RAM</button>
+    <button class="btn" id="btnRefresh">Refresh</button>
+    <button class="btn" id="btnExit">Exit</button>
+    <div class="status-pill" id="statusPill">Loading running apps...</div>
+  </div>
+
+  <div class="section-title" id="listHeader">Running User Apps</div>
+  <div class="list" id="appList"></div>
+
+  <div class="footer">
+    <span>D-Pad: Navigate &nbsp;|&nbsp; OK / Enter: Force Close / Select &nbsp;|&nbsp; Back: Exit</span>
+    <span>LG webOS Homebrew Task Manager</span>
+  </div>
+</div>
+
+<script>
+(function() {
+  var PROTECTED = {
+    "com.webos.app.fullhome": true,
+    "com.webos.app.home": true,
+    "com.webos.app.screensaver": true,
+    "com.webos.app.livetv": true,
+    "com.webos.app.notificationcenter": true,
+    "com.webos.app.volume": true,
+    "com.webos.app.voice": true,
+    "com.webos.app.systemui": true,
+    "org.webosbrew.freemem": true,
+    "org.webosbrew.taskmgr": true
+  };
+
+  var titleMap = {};
+  var apps = [];
+  var busy = false;
+
+  // Focus state: zone = "actions" (idx 0..2) or "list" (idx 0..apps.length-1)
+  var focusZone = "actions";
+  var focusIdx = 0;
+
+  var btnCleanAll = document.getElementById("btnCleanAll");
+  var btnRefresh = document.getElementById("btnRefresh");
+  var btnExit = document.getElementById("btnExit");
+  var actionBtns = [btnCleanAll, btnRefresh, btnExit];
+  var appListEl = document.getElementById("appList");
+  var statusPill = document.getElementById("statusPill");
+  var ramText = document.getElementById("ramText");
+  var ramBar = document.getElementById("ramBar");
+  var listHeader = document.getElementById("listHeader");
+
+  function isProtected(id) {
+    if (!id) return true;
+    if (PROTECTED[id]) return true;
+    if (id.indexOf("com.webos.app.hdmi") === 0) return true;
+    if (id.indexOf("com.webos.app.externalinput") === 0) return true;
+    return false;
+  }
+
+  function execRoot(command, cb) {
+    try {
+      var bridge = new PalmServiceBridge();
+      bridge.onservicecallback = function(raw) {
+        try {
+          var res = JSON.parse(raw);
+          cb(null, res.stdoutString || "");
+        } catch (e) {
+          cb(e, "");
+        }
+      };
+      bridge.call(
+        "luna://org.webosbrew.hbchannel.service/exec",
+        JSON.stringify({ command: command })
+      );
+    } catch (err) {
+      cb(err, "");
+    }
+  }
+
+  function closeSelf() {
+    try {
+      var b = new PalmServiceBridge();
+      b.call("luna://com.webos.applicationManager/closeByAppId", JSON.stringify({ id: "org.webosbrew.taskmgr" }));
+    } catch (e) {}
+    try { window.close(); } catch (e) {}
+  }
+
+  function setStatus(msg) {
+    statusPill.textContent = msg;
+  }
+
+  function updateFocusVisuals() {
+    for (var i = 0; i < actionBtns.length; i++) {
+      actionBtns[i].classList.toggle("focused", focusZone === "actions" && focusIdx === i);
+    }
+    var rows = appListEl.querySelectorAll(".row");
+    for (var j = 0; j < rows.length; j++) {
+      var active = (focusZone === "list" && focusIdx === j);
+      rows[j].classList.toggle("focused", active);
+      if (active) {
+        rows[j].scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+    }
+  }
+
+  function renderApps() {
+    appListEl.innerHTML = "";
+    listHeader.textContent = "Running User Apps (" + apps.length + ")";
+    if (apps.length === 0) {
+      var empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = "No background user apps are currently running.";
+      appListEl.appendChild(empty);
+      if (focusZone === "list") {
+        focusZone = "actions";
+        focusIdx = 0;
+      }
+      updateFocusVisuals();
+      return;
+    }
+
+    for (var i = 0; i < apps.length; i++) {
+      (function(idx, app) {
+        var row = document.createElement("div");
+        row.className = "row";
+        row.innerHTML =
+          '<div class="row-left">' +
+            '<div class="app-name">' + escapeHtml(app.title) + '</div>' +
+            '<div class="app-meta">' + escapeHtml(app.id) + ' &nbsp;&bull;&nbsp; ' + escapeHtml(app.appType) + ' &nbsp;&bull;&nbsp; PID ' + escapeHtml(app.pid) + '</div>' +
+          '</div>' +
+          '<div class="row-right">' +
+            '<div class="mem-badge">' + (app.rssMb > 0 ? (app.rssMb + ' MB') : '—') + '</div>' +
+            '<div class="kill-tag">&#x2715; Force Close</div>' +
+          '</div>';
+        row.addEventListener("mouseenter", function() {
+          focusZone = "list";
+          focusIdx = idx;
+          updateFocusVisuals();
+        });
+        row.addEventListener("click", function() {
+          killSingleApp(app);
+        });
+        appListEl.appendChild(row);
+      })(i, apps[i]);
+    }
+
+    if (focusZone === "list" && focusIdx >= apps.length) {
+      focusIdx = apps.length - 1;
+    }
+    updateFocusVisuals();
+  }
+
+  function escapeHtml(s) {
+    return String(s || "").replace(/[&<>"']/g, function(c) {
+      return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c];
+    });
+  }
+
+  var MEM_HELPER = 'DIR="/media/developer/apps/usr/palm/applications/com.github.dasilva333.systemtools/bin/webos-memmgr.sh"; if [ -f "$DIR" ]; then sh "$DIR"; else /var/lib/webosbrew/bin/webos-memmgr.sh; fi';
+
+  function execMem(args, cb) {
+    execRoot(MEM_HELPER + " " + args, cb);
+  }
+
+  function isProtected(id) {
+    if (!id) return true;
+    if (id === "com.github.dasilva333.systemtools" || id === "com.github.dasilva333.freemem") return true;
+    if (id === "org.webosbrew.taskmgr" || id === "org.webosbrew.freemem") return true;
+    return id.indexOf("com.webos.app.") === 0;
+  }
+
+  function loadTitles(cb) {
+    execMem("titles", function(err, out) {
+      if (!err && out) {
+        try {
+          var parsed = JSON.parse(out);
+          var list = parsed.launchPoints || [];
+          for (var i = 0; i < list.length; i++) {
+            if (list[i].id && list[i].title) {
+              titleMap[list[i].id] = list[i].title;
+            }
+          }
+        } catch (e) {}
+      }
+      if (cb) cb();
+    });
+  }
+
+  function refresh(keepStatus) {
+    if (busy) return;
+    busy = true;
+    if (!keepStatus) setStatus("Refreshing...");
+    execMem("status", function(err, out) {
+      busy = false;
+      if (err || !out) {
+        setStatus("Error reading TV status");
+        return;
+      }
+      try {
+        var data = JSON.parse(out);
+        var mem = data.mem || {};
+        var totalMb = Math.round((mem.totalKb || 0) / 1024);
+        var availMb = Math.round((mem.availKb || 0) / 1024);
+        var usedMb = Math.max(0, totalMb - availMb);
+        var pct = totalMb > 0 ? Math.min(100, Math.round((usedMb / totalMb) * 100)) : 0;
+
+        ramText.textContent = usedMb + " / " + totalMb + " MB  (" + availMb + " MB free)";
+        ramBar.style.width = pct + "%";
+        ramBar.classList.toggle("warn", pct >= 82);
+
+        var rssKb = data.rssKb || {};
+        var rawRunning = (data.running && data.running.running) ? data.running.running : [];
+        var filtered = [];
+        for (var i = 0; i < rawRunning.length; i++) {
+          var r = rawRunning[i];
+          if (isProtected(r.id)) continue;
+          var pid = r.processid || "";
+          var wpid = r.webprocessid || "";
+          var kb = (rssKb[pid] || 0);
+          if (wpid && wpid !== pid) kb += (rssKb[wpid] || 0);
+          filtered.push({
+            id: r.id,
+            title: titleMap[r.id] || r.id,
+            appType: r.appType || "app",
+            pid: pid,
+            wpid: wpid,
+            rssMb: Math.round(kb / 1024)
+          });
+        }
+        // Sort heaviest RAM first
+        filtered.sort(function(a, b) { return b.rssMb - a.rssMb; });
+        apps = filtered;
+        renderApps();
+        if (!keepStatus) setStatus("Ready");
+      } catch (e) {
+        setStatus("Parse error");
+      }
+    });
+  }
+
+  function killSingleApp(app) {
+    if (busy || !app) return;
+    busy = true;
+    setStatus("Force-closing " + app.title + "...");
+    var safeLabel = app.title.replace(/[^a-zA-Z0-9 ._-]/g, "");
+    execMem("kill '" + app.pid + "' '" + (app.wpid || "") + "' '" + safeLabel + "'", function(err, out) {
+      busy = false;
+      var msg = "Closed " + app.title;
+      try {
+        var res = JSON.parse(out.trim());
+        if (res && res.freedMb > 0) msg += " (+" + res.freedMb + " MB)";
+      } catch (e) {}
+      setStatus(msg);
+      refresh(true);
+    });
+  }
+
+  function cleanAllApps() {
+    if (busy) return;
+    busy = true;
+    setStatus("Closing all user apps & flushing RAM...");
+    execMem("clean-all", function(err, out) {
+      busy = false;
+      var msg = "Memory cleaned";
+      try {
+        var res = JSON.parse(out.trim());
+        if (res && res.ok) {
+          msg = res.closed > 0
+            ? "Closed " + res.closed + " app(s) (+" + res.freedMb + " MB)"
+            : "Caches flushed (+" + res.freedMb + " MB)";
+        }
+      } catch (e) {}
+      setStatus(msg);
+      refresh(true);
+    });
+  }
+
+  btnCleanAll.addEventListener("click", cleanAllApps);
+  btnRefresh.addEventListener("click", function() { refresh(false); });
+  btnExit.addEventListener("click", closeSelf);
+
+  for (var k = 0; k < actionBtns.length; k++) {
+    (function(idx) {
+      actionBtns[idx].addEventListener("mouseenter", function() {
+        focusZone = "actions";
+        focusIdx = idx;
+        updateFocusVisuals();
+      });
+    })(k);
+  }
+
+  document.addEventListener("keydown", function(e) {
+    var code = e.keyCode;
+    // webOS Back = 461, Esc = 27, Backspace = 8
+    if (code === 461 || code === 27 || code === 8) {
+      e.preventDefault();
+      closeSelf();
+      return;
+    }
+    if (code === 37) { // Left
+      e.preventDefault();
+      if (focusZone === "actions") {
+        focusIdx = (focusIdx + actionBtns.length - 1) % actionBtns.length;
+        updateFocusVisuals();
+      }
+    } else if (code === 39) { // Right
+      e.preventDefault();
+      if (focusZone === "actions") {
+        focusIdx = (focusIdx + 1) % actionBtns.length;
+        updateFocusVisuals();
+      }
+    } else if (code === 40) { // Down
+      e.preventDefault();
+      if (focusZone === "actions" && apps.length > 0) {
+        focusZone = "list";
+        focusIdx = 0;
+        updateFocusVisuals();
+      } else if (focusZone === "list" && focusIdx < apps.length - 1) {
+        focusIdx++;
+        updateFocusVisuals();
+      }
+    } else if (code === 38) { // Up
+      e.preventDefault();
+      if (focusZone === "list") {
+        if (focusIdx > 0) {
+          focusIdx--;
+        } else {
+          focusZone = "actions";
+          focusIdx = 0;
+        }
+        updateFocusVisuals();
+      }
+    } else if (code === 13) { // OK / Enter
+      e.preventDefault();
+      if (focusZone === "actions") {
+        if (focusIdx === 0) cleanAllApps();
+        else if (focusIdx === 1) refresh(false);
+        else if (focusIdx === 2) closeSelf();
+      } else if (focusZone === "list" && apps[focusIdx]) {
+        killSingleApp(apps[focusIdx]);
+      }
+    }
+  });
+
+  document.addEventListener("webOSRelaunch", function() {
+    refresh(false);
+  });
+
+  window.addEventListener("load", function() {
+    updateFocusVisuals();
+    loadTitles(function() {
+      refresh(false);
+    });
+  });
+})();
+</script>
+</body>
+</html>

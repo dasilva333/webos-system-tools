@@ -238,7 +238,7 @@
   </div>
 
   <div class="actions">
-    <button class="btn primary" id="btnCleanAll">Close All &amp; Free RAM</button>
+    <button class="btn primary" id="btnCleanAll">Close Background Apps</button>
     <button class="btn" id="btnRefresh">Refresh</button>
     <button class="btn" id="btnExit">Exit</button>
     <div class="status-pill" id="statusPill">Loading running apps...</div>
@@ -295,6 +295,38 @@
   }
 
   function execRoot(command, cb) {
+    if (typeof PalmServiceBridge === "undefined") {
+      setTimeout(function() {
+        if (command.indexOf("titles") !== -1) {
+          cb(null, JSON.stringify({
+            launchPoints: [
+              { id: "org.xbmc.kodi", title: "Kodi" },
+              { id: "youtube.leanback.v4", title: "YouTube" },
+              { id: "com.plutotv.app", title: "Pluto TV" },
+              { id: "cdp-30", title: "Plex" },
+              { id: "com.limelight.webos", title: "Moonlight" }
+            ]
+          }));
+        } else if (command.indexOf("status") !== -1) {
+          cb(null, JSON.stringify({
+            mem: { totalKb: 2097152, availKb: 725000 },
+            rssKb: { "3412": 438272, "2891": 319488, "4108": 190464, "5022": 148480, "6114": 96256 },
+            running: {
+              running: [
+                { id: "org.xbmc.kodi", appType: "native", processid: "3412" },
+                { id: "youtube.leanback.v4", appType: "web", processid: "2891" },
+                { id: "com.plutotv.app", appType: "web", processid: "4108" },
+                { id: "cdp-30", appType: "web", processid: "5022" },
+                { id: "com.limelight.webos", appType: "native", processid: "6114" }
+              ]
+            }
+          }));
+        } else {
+          cb(null, '{"ok":true}');
+        }
+      }, 50);
+      return;
+    }
     try {
       var bridge = new PalmServiceBridge();
       bridge.onservicecallback = function(raw) {

@@ -27,6 +27,9 @@ Task Manager is a native process inspector and system diagnostic utility built s
 * **Background App Cleanup**: Single-action control to gracefully terminate non-essential background user processes while preserving core system services.
 * **OLED Dark Aesthetic**: Custom high-contrast theme designed for comfortable readability from the couch.
 
+### Screenshot
+![Task Manager Screenshot](https://raw.githubusercontent.com/dasilva333/webos-system-tools/main/assets/screenshot1.png)
+
 ### Compatibility & Verification
 * **Tested Device**: LG CX OLED (webOS 5.3.1 / Chromium 68)
 * **Framework**: Vanilla HTML5/JS (ES5 compatible across webOS 1.x through webOS 11+)
